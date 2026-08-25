@@ -12,7 +12,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useAnimalDetail, useAnimals, updateAnimal } from '../../../../../hooks/useAnimals';
-import { SireDamPicker } from '../../../../../components/farm/SireDamPicker';
+import { ParentPicker } from '../../../../../components/farm/ParentPicker';
 import { KeyboardAwareContainer } from '../../../../../components/ui/KeyboardAwareContainer';
 import { AnimalSex, AnimalStatus, AnimalSpecies, AnimalWithParents } from '../../../../../types/animal';
 import { getSpeciesConfig, SPECIES_CONFIGS } from '../../../../../utils/species';
@@ -194,8 +194,8 @@ export default function EditAnimalScreen() {
                   {animal
                     ? `Tag: ${animal.sheep_id} (${animal.breed})`
                     : targetAnimalId
-                    ? `ID: ${targetAnimalId.slice(0, 8)}...`
-                    : 'No animal selected'}
+                      ? `ID: ${targetAnimalId.slice(0, 8)}...`
+                      : 'No animal selected'}
                 </Text>
               </View>
 
@@ -233,17 +233,15 @@ export default function EditAnimalScreen() {
                         <TouchableOpacity
                           key={item.id}
                           onPress={() => setSpecies(item.id)}
-                          className={`px-3 py-2 rounded-xl border flex-row items-center gap-1.5 ${
-                            isSelected
+                          className={`px-3 py-2 rounded-xl border flex-row items-center gap-1.5 ${isSelected
                               ? 'bg-farm-primary-bg border-farm-primary'
                               : 'bg-farm-bg border-farm-border'
-                          }`}
+                            }`}
                         >
                           <Text className="text-base">{item.emoji}</Text>
                           <Text
-                            className={`text-xs font-bold ${
-                              isSelected ? 'text-farm-primary' : 'text-farm-text'
-                            }`}
+                            className={`text-xs font-bold ${isSelected ? 'text-farm-primary' : 'text-farm-text'
+                              }`}
                           >
                             {item.label}
                           </Text>
@@ -275,17 +273,15 @@ export default function EditAnimalScreen() {
                   <View className="flex-row gap-3">
                     <TouchableOpacity
                       onPress={() => setSex('female')}
-                      className={`flex-1 p-3 rounded-xl border flex-row items-center justify-center gap-2 ${
-                        sex === 'female'
+                      className={`flex-1 p-3 rounded-xl border flex-row items-center justify-center gap-2 ${sex === 'female'
                           ? 'bg-pink-50 border-pink-400'
                           : 'bg-farm-bg border-farm-border'
-                      }`}
+                        }`}
                     >
                       <Text className="text-base">♀</Text>
                       <Text
-                        className={`text-xs font-bold ${
-                          sex === 'female' ? 'text-pink-700' : 'text-farm-muted'
-                        }`}
+                        className={`text-xs font-bold ${sex === 'female' ? 'text-pink-700' : 'text-farm-muted'
+                          }`}
                       >
                         Female ({speciesConfig.femaleTerm})
                       </Text>
@@ -293,17 +289,15 @@ export default function EditAnimalScreen() {
 
                     <TouchableOpacity
                       onPress={() => setSex('male')}
-                      className={`flex-1 p-3 rounded-xl border flex-row items-center justify-center gap-2 ${
-                        sex === 'male'
+                      className={`flex-1 p-3 rounded-xl border flex-row items-center justify-center gap-2 ${sex === 'male'
                           ? 'bg-blue-50 border-blue-400'
                           : 'bg-farm-bg border-farm-border'
-                      }`}
+                        }`}
                     >
                       <Text className="text-base">♂</Text>
                       <Text
-                        className={`text-xs font-bold ${
-                          sex === 'male' ? 'text-blue-700' : 'text-farm-muted'
-                        }`}
+                        className={`text-xs font-bold ${sex === 'male' ? 'text-blue-700' : 'text-farm-muted'
+                          }`}
                       >
                         Male ({speciesConfig.maleTerm})
                       </Text>
@@ -368,16 +362,14 @@ export default function EditAnimalScreen() {
                       <TouchableOpacity
                         key={item.value}
                         onPress={() => setStatus(item.value)}
-                        className={`flex-1 py-2.5 rounded-xl border items-center ${
-                          status === item.value
+                        className={`flex-1 py-2.5 rounded-xl border items-center ${status === item.value
                             ? 'bg-farm-primary border-farm-primary'
                             : 'bg-farm-bg border-farm-border'
-                        }`}
+                          }`}
                       >
                         <Text
-                          className={`text-xs font-semibold ${
-                            status === item.value ? 'text-farm-inverse' : 'text-farm-muted'
-                          }`}
+                          className={`text-xs font-semibold ${status === item.value ? 'text-farm-inverse' : 'text-farm-muted'
+                            }`}
                         >
                           {item.label}
                         </Text>
@@ -391,20 +383,22 @@ export default function EditAnimalScreen() {
                   <Text className="text-xs font-bold text-farm-muted uppercase tracking-wider mb-2">
                     Pedigree Parents
                   </Text>
-                  <SireDamPicker
+                  <ParentPicker
                     farmId={farmId}
+                    species={species}
                     label={speciesConfig.sireTerm}
                     targetSex="male"
                     selectedId={sireId}
-                    onSelect={(selectedSireId) => setSireId(selectedSireId)}
+                    onSelect={(selectedSireId: string | null) => setSireId(selectedSireId)}
                     excludeAnimalId={targetAnimalId}
                   />
-                  <SireDamPicker
+                  <ParentPicker
                     farmId={farmId}
+                    species={species}
                     label={speciesConfig.damTerm}
                     targetSex="female"
                     selectedId={damId}
-                    onSelect={(selectedDamId) => setDamId(selectedDamId)}
+                    onSelect={(selectedDamId: string | null) => setDamId(selectedDamId)}
                     excludeAnimalId={targetAnimalId}
                   />
                 </View>
@@ -478,11 +472,10 @@ export default function EditAnimalScreen() {
                 renderItem={({ item }) => (
                   <TouchableOpacity
                     onPress={() => handleSelectAnimal(item)}
-                    className={`p-3 rounded-xl border mb-2 flex-row items-center justify-between ${
-                      item.id === targetAnimalId
+                    className={`p-3 rounded-xl border mb-2 flex-row items-center justify-between ${item.id === targetAnimalId
                         ? 'border-farm-primary bg-farm-primary-bg'
                         : 'border-farm-border bg-farm-surface'
-                    }`}
+                      }`}
                   >
                     <View>
                       <Text className="text-sm font-bold text-farm-text">{item.sheep_id}</Text>

@@ -132,11 +132,20 @@ export default function ActiveFarmDashboard() {
               <Text className="text-xs text-farm-muted mt-0.5">Treatments & Withdrawal</Text>
             </TouchableOpacity>
 
-            <View className="w-[48%] md:w-[23.5%] bg-farm-surface border border-farm-border rounded-2xl p-4">
-              <Text className="text-2xl mb-2">🌾</Text>
-              <Text className="text-sm font-bold text-farm-text">Feed Logs</Text>
-              <Text className="text-xs text-farm-muted mt-0.5">Forage & Yield (Phase 4)</Text>
-            </View>
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => router.push(`/(app)/${farmId}/feed` as any)}
+              className="w-[48%] md:w-[23.5%] bg-farm-surface border border-farm-border rounded-2xl p-4 shadow-xs hover:border-farm-primary/50"
+            >
+              <View className="flex-row items-center justify-between mb-2">
+                <Text className="text-2xl">🌾</Text>
+                <View className="px-2 py-0.5 bg-farm-primary-bg rounded-full border border-farm-primary/30">
+                  <Text className="text-[10px] font-bold text-farm-primary font-mono">ACTIVE</Text>
+                </View>
+              </View>
+              <Text className="text-sm font-bold text-farm-text">Feed Records</Text>
+              <Text className="text-xs text-farm-muted mt-0.5">Forage & Supplements</Text>
+            </TouchableOpacity>
 
             <View className="w-[48%] md:w-[23.5%] bg-farm-surface border border-farm-border rounded-2xl p-4">
               <Text className="text-2xl mb-2">📊</Text>

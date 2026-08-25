@@ -235,22 +235,6 @@ export default function AnimalsListScreen() {
             <ActivityIndicator size="large" color="#3D7A3A" />
             <Text className="text-xs text-farm-muted mt-3">Loading herd records...</Text>
           </View>
-        ) : animals.length === 0 ? (
-          <View className="flex-1 justify-center items-center py-16 bg-farm-surface border border-farm-border rounded-3xl p-6 mb-6">
-            <Text className="text-4xl mb-3">🐑</Text>
-            <Text className="text-base font-bold text-farm-text text-center">No Animal Records Found</Text>
-            <Text className="text-xs text-farm-muted text-center mt-1 mb-4">
-              {search || selectedStatus || selectedSex
-                ? 'No animals match your search or filters.'
-                : 'Start building your farm inventory by adding your first animal record.'}
-            </Text>
-            <TouchableOpacity
-              onPress={() => router.push({ pathname: '/(app)/[farmId]/animals/new', params: { farmId } })}
-              className="bg-farm-primary px-5 py-2.5 rounded-xl shadow-xs"
-            >
-              <Text className="text-xs font-bold text-farm-inverse">+ Add First Animal</Text>
-            </TouchableOpacity>
-          </View>
         ) : (
           <FlatList
             data={animals}
@@ -258,7 +242,26 @@ export default function AnimalsListScreen() {
             refreshControl={
               <RefreshControl refreshing={isLoading} onRefresh={refetch} colors={['#3D7A3A']} />
             }
-            contentContainerStyle={{ paddingBottom: 40 }}
+            contentContainerStyle={{ flexGrow: 1, paddingBottom: 40 }}
+            ListEmptyComponent={
+              !isLoading ? (
+                <View className="flex-1 justify-center items-center py-16 bg-farm-surface border border-farm-border rounded-3xl p-6 mb-6">
+                  <Text className="text-4xl mb-3">🐑</Text>
+                  <Text className="text-base font-bold text-farm-text text-center">No Animal Records Found</Text>
+                  <Text className="text-xs text-farm-muted text-center mt-1 mb-4">
+                    {search || selectedStatus || selectedSex
+                      ? 'No animals match your search or filters.'
+                      : 'Start building your farm inventory by adding your first animal record.'}
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => router.push({ pathname: '/(app)/[farmId]/animals/new', params: { farmId } })}
+                    className="bg-farm-primary px-5 py-2.5 rounded-xl shadow-xs"
+                  >
+                    <Text className="text-xs font-bold text-farm-inverse">+ Add First Animal</Text>
+                  </TouchableOpacity>
+                </View>
+              ) : null
+            }
             renderItem={({ item }) => (
               <AnimalCard
                 animal={item}

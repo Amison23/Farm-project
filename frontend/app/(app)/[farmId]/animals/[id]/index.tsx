@@ -10,8 +10,10 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useAnimalDetail, useAnimalLineage, deleteAnimal } from '../../../../../hooks/useAnimals';
+import { useAnimalFeedHistory } from '../../../../../hooks/useFeedRecords';
 import { StatusBadge } from '../../../../../components/farm/StatusBadge';
 import { PedigreeTree } from '../../../../../components/farm/PedigreeTree';
+import { FeedRecordCard } from '../../../../../components/farm/FeedRecordCard';
 import { getSexTerm, getSpeciesConfig } from '../../../../../utils/species';
 
 export default function AnimalDetailScreen() {
@@ -20,8 +22,9 @@ export default function AnimalDetailScreen() {
 
   const { animal, isLoading: isLoadingAnimal, error: animalError, refetch: refetchAnimal } = useAnimalDetail(farmId, id);
   const { lineage, isLoading: isLoadingLineage, refetch: refetchLineage } = useAnimalLineage(farmId, id);
+  const { history: feedHistory, isLoading: isLoadingFeed } = useAnimalFeedHistory(farmId, id);
 
-  const [activeTab, setActiveTab] = useState<'overview' | 'pedigree'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'pedigree' | 'feed'>('overview');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState('');
@@ -165,7 +168,22 @@ export default function AnimalDetailScreen() {
                 activeTab === 'pedigree' ? 'text-farm-text' : 'text-farm-muted'
               }`}
             >
-              Pedigree Chain 🌳
+              Pedigree 🌳
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => setActiveTab('feed')}
+            className={`flex-1 py-2 rounded-xl items-center ${
+              activeTab === 'feed' ? 'bg-farm-surface shadow-xs' : ''
+            }`}
+          >
+            <Text
+              className={`text-xs font-bold ${
+                activeTab === 'feed' ? 'text-farm-text' : 'text-farm-muted'
+              }`}
+            >
+              Feed Log 🌾
             </Text>
           </TouchableOpacity>
         </View>
@@ -243,7 +261,7 @@ export default function AnimalDetailScreen() {
               </View>
             ) : null}
           </View>
-        ) : (
+        ) : activeTab === 'pedigree' ? (
           <View>
             {isLoadingLineage ? (
               <ActivityIndicator size="small" color="#3D7A3A" className="py-8" />
@@ -260,6 +278,46 @@ export default function AnimalDetailScreen() {
               <View className="bg-farm-surface border border-farm-border rounded-3xl p-6 items-center">
                 <Text className="text-xs text-farm-muted">No lineage records found for this animal.</Text>
               </View>
+            )}
+          </View>
+        ) : (
+          <View className="gap-3">
+            <View className="flex-row items-center justify-between mb-2">
+              <Text className="text-xs font-bold text-farm-muted uppercase tracking-widest font-mono">
+                Nutrition & Forage History
+              </Text>
+              <TouchableOpacity
+                onPress={() => router.push({ pathname: '/(app)/[farmId]/feed/new', params: { farmId, animalId: id } })}
+                className="px-3 py-1.5 bg-farm-primary rounded-xl"
+              >
+                <Text className="text-xs font-bold text-farm-inverse">+ Log Feed</Text>
+              </TouchableOpacity>
+            </View>
+
+            {isLoadingFeed ? (
+              <ActivityIndicator size="small" color="#3D7A3A" className="py-8" />
+            ) : feedHistory.length === 0 ? (
+              <View className="bg-farm-surface border border-farm-border rounded-3xl p-8 items-center">
+                <Text className="text-3xl mb-2">🌾</Text>
+                <Text className="text-sm font-bold text-farm-text mb-1">No Feed Logs Found</Text>
+                <Text className="text-xs text-farm-muted text-center mb-4">
+                  No feed or nutrition logs have been recorded for this animal yet.
+                </Text>
+                <TouchableOpacity
+                  onPress={() => router.push({ pathname: '/(app)/[farmId]/feed/new', params: { farmId, animalId: id } })}
+                  className="bg-farm-primary px-4 py-2 rounded-xl"
+                >
+                  <Text className="text-xs font-bold text-farm-inverse">+ Log First Feed</Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              feedHistory.map((item) => (
+                <FeedRecordCard
+                  key={item.id}
+                  record={item}
+                  onPress={() => router.push(`/(app)/${farmId}/feed/${item.id}` as any)}
+                />
+              ))
             )}
           </View>
         )}

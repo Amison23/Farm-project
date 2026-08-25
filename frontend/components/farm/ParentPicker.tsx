@@ -18,7 +18,7 @@ export interface ParentPickerProps {
   targetSex: AnimalSex;
   species?: AnimalSpecies;
   selectedId: string | null;
-  onSelect: (animalId: string | null, sheepId: string | null) => void;
+  onSelect: (animalId: string | null, sheepId?: string | null) => void;
   excludeAnimalId?: string;
 }
 
@@ -147,6 +147,3 @@ export const ParentPicker: React.FC<ParentPickerProps> = ({
   );
 };
 
-// Export SireDamPicker alias for backward compatibility
-export const SireDamPicker = ParentPicker;
-export type SireDamPickerProps = ParentPickerProps;

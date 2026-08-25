@@ -5,17 +5,22 @@ import { useRouter } from 'expo-router';
 import { KeyboardAwareContainer } from '../../components/ui/KeyboardAwareContainer';
 import { useAuth } from '../../contexts/AuthContext';
 
+// DEV_AUTO_LOGIN_REMOVABLE: Pre-filled credentials for development mode
+const DEV_OWNER_EMAIL = 'owner@farm.com';
+const DEV_OWNER_PASSWORD = 'Password123!';
+
 export default function SignIn() {
   const router = useRouter();
   const { signIn } = useAuth();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  // Pre-filled with owner@farm.com for development convenience
+  const [email, setEmail] = useState(DEV_OWNER_EMAIL);
+  const [password, setPassword] = useState(DEV_OWNER_PASSWORD);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
-  const handleSignIn = async () => {
-    if (!email || !password) {
+  const handleSignInWith = async (targetEmail: string, targetPass: string) => {
+    if (!targetEmail || !targetPass) {
       setErrorMsg('Please fill in all fields.');
       return;
     }
@@ -23,7 +28,7 @@ export default function SignIn() {
     setIsSubmitting(true);
 
     try {
-      await signIn(email.trim(), password);
+      await signIn(targetEmail.trim(), targetPass);
       router.replace('/(app)/farmSelect');
     } catch (err: any) {
       setErrorMsg(err.message || 'Failed to sign in.');
@@ -31,6 +36,8 @@ export default function SignIn() {
       setIsSubmitting(false);
     }
   };
+
+  const handleSignIn = () => handleSignInWith(email, password);
 
   return (
     <SafeAreaView className="flex-1 bg-farm-bg">
@@ -47,6 +54,22 @@ export default function SignIn() {
             <Text className="text-2xl font-bold text-farm-text">Welcome Back</Text>
             <Text className="text-sm text-farm-muted mt-1">Sign in to your AgriTrack account</Text>
           </View>
+
+          {/* DEV_AUTO_LOGIN_REMOVABLE: 1-Tap Quick Login Button */}
+          <TouchableOpacity
+            onPress={() => handleSignInWith(DEV_OWNER_EMAIL, DEV_OWNER_PASSWORD)}
+            disabled={isSubmitting}
+            className="mb-4 bg-amber-50 border border-amber-300 rounded-2xl p-3.5 flex-row items-center justify-between"
+          >
+            <View className="flex-row items-center gap-2">
+              <Text className="text-base">⚡</Text>
+              <View>
+                <Text className="text-xs font-bold text-amber-900">Dev Quick Sign In</Text>
+                <Text className="text-[11px] text-amber-700">{DEV_OWNER_EMAIL}</Text>
+              </View>
+            </View>
+            <Text className="text-xs font-bold text-amber-800">1-Tap Login ›</Text>
+          </TouchableOpacity>
 
           {/* Error message banner */}
           {errorMsg ? (
