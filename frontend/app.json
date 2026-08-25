@@ -1,0 +1,33 @@
+{
+  "expo": {
+    "name": "AgriTrack",
+    "slug": "agritrack",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "agritrack",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "edgeToEdgeEnabled": true,
+      "adaptiveIcon": {
+        "backgroundColor": "#3D7A3A"
+      },
+      "package": "com.humblelicense12.agritrack"
+    },
+    "web": {
+      "output": "static",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "expo-web-browser"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

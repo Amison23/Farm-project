@@ -1,0 +1,31 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./*"
+      ]
+    }
+  },
+  "include": [
+    "app/**/*.tsx",
+    "app/**/*.ts",
+    "components/**/*.tsx",
+    "components/**/*.ts",
+    "contexts/**/*.tsx",
+    "contexts/**/*.ts",
+    "hooks/**/*.ts",
+    "services/**/*.ts",
+    "types/**/*.ts",
+    "theme/**/*.ts",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts",
+    "nativewind-env.d.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
