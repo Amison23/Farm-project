@@ -13,8 +13,19 @@ export class ImportController {
         return;
       }
 
-      // Check extension or mime type
-      if (!req.file.originalname.match(/\.(csv|txt)$/i) && req.file.mimetype !== 'text/csv') {
+      // Check mime type or extension (allow common CSV mimetypes and blob uploads)
+      const isAllowedMime = [
+        'text/csv',
+        'text/comma-separated-values',
+        'application/csv',
+        'application/vnd.ms-excel',
+        'text/plain',
+        'application/octet-stream',
+      ].includes(req.file.mimetype);
+
+      const hasCsvExtension = Boolean(req.file.originalname.match(/\.(csv|txt)$/i));
+
+      if (!isAllowedMime && !hasCsvExtension && req.file.originalname !== 'blob') {
         res.status(400).json({
           error: 'Invalid file format. Please upload a valid CSV file.',
         });

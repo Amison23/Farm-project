@@ -82,12 +82,12 @@ Each phase is independently shippable, verified against `docs/SCHEMA.md`, and sc
 #### Phase 5 — CSV Import (Onboarding)
 **Goal**: Owner can bulk-import their existing Excel-derived data without hand-entering every row.
 **Deliverables**:
-- [ ] `/import/preview` — CSV upload, column detection
-- [ ] Column-mapping UI (map arbitrary headers → fixed schema fields)
-- [ ] `/import/commit` — validated bulk insert into `animals`
+- [x] `/import/preview` — CSV upload, column detection
+- [x] Column-mapping UI (map arbitrary headers → fixed schema fields)
+- [x] `/import/commit` — validated bulk insert into `animals`
 **Definition of Done**:
-- [ ] A real (anonymized) export of the client's Excel data imports successfully end-to-end with zero silent field loss
-- [ ] Malformed/missing-required-field rows are rejected with a clear per-row error, not a failed whole-batch import
+- [x] A real (anonymized) export of the client's Excel data imports successfully end-to-end with zero silent field loss
+- [x] Malformed/missing-required-field rows are rejected with a clear per-row error, not a failed whole-batch import
 **Blocked by**: Phase 2
 
 ---

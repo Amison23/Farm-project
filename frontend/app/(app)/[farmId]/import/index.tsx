@@ -46,11 +46,13 @@ export default function CSVImportScreen() {
 
       if (!res.canceled && res.assets && res.assets.length > 0) {
         const file = res.assets[0];
-        const fileObj = {
-          uri: file.uri,
-          name: file.name || 'import.csv',
-          type: file.mimeType || 'text/csv',
-        };
+        const fileObj = (file as any).file
+          ? (file as any).file
+          : {
+              uri: file.uri,
+              name: file.name || 'import.csv',
+              type: file.mimeType || 'text/csv',
+            };
         setSelectedFile(fileObj);
 
         // Fetch preview

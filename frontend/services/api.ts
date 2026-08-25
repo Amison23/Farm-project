@@ -36,6 +36,11 @@ export const api: AxiosInstance = axios.create({
 // Interceptor: inject Supabase Auth JWT token dynamically on every request
 api.interceptors.request.use(
   async (config) => {
+    // If data is FormData, remove default application/json header so browser/Axios sets boundary
+    if (config.data instanceof FormData) {
+      delete config.headers['Content-Type'];
+    }
+
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.access_token) {
@@ -122,10 +127,16 @@ api.interceptors.response.use(
       }
     }
 
+    console.log('[RAW_BACKEND_ERROR_RESPONSE]', {
+      status: error.response?.status,
+      rawData: error.response?.data,
+      headers: error.response?.headers,
+    });
+
     const customError = {
       status: error.response?.status || 500,
-      code: error.response?.data?.error?.code || 'NETWORK_ERROR',
-      message: error.response?.data?.error?.message || error.message || 'An unexpected error occurred.',
+      code: error.response?.data?.error?.code || (typeof error.response?.data?.error === 'string' ? 'BAD_REQUEST' : 'NETWORK_ERROR'),
+      message: (typeof error.response?.data?.error === 'string' ? error.response?.data?.error : error.response?.data?.error?.message) || error.message || 'An unexpected error occurred.',
     };
     return Promise.reject(customError);
   }
