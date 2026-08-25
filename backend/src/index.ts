@@ -6,6 +6,7 @@ import authRoutes from './routes/authRoutes.js';
 import farmRoutes from './routes/farmRoutes.js';
 import animalRoutes from './routes/animalRoutes.js';
 import vetRoutes from './routes/vetRoutes.js';
+import feedRoutes from './routes/feedRoutes.js';
 
 dotenv.config();
 
@@ -51,6 +52,7 @@ app.get('/health', async (_req: Request, res: Response) => {
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/farms/:farmId/animals', animalRoutes);
 app.use('/api/v1/farms/:farmId/vet-records', vetRoutes);
+app.use('/api/v1/farms/:farmId/feed', feedRoutes);
 app.use('/api/v1/farms', farmRoutes);
 
 // ─── Start Server ─────────────────────────────────────────────────────────────
