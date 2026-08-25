@@ -14,6 +14,7 @@ export default function FarmLayout() {
       <Stack.Screen name="feed/index" />
       <Stack.Screen name="feed/new" />
       <Stack.Screen name="feed/[id]" />
+      <Stack.Screen name="import/index" />
     </Stack>
   );
 }
