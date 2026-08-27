@@ -1,1 +1,25 @@
-node_modules
+# Dependencies
+node_modules/
+
+# Development Docs (Internal)
+dev_docs/
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
+frontend/.env
+backend/.env
+
+# Build outputs & Caches
+dist/
+.expo/
+.expo-shared/
+web-build/
+*.log
+
+# OS & IDE files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
