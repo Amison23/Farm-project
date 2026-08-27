@@ -3,10 +3,26 @@ import { Platform } from 'react-native';
 import Constants from 'expo-constants';
 import { supabase } from './supabase';
 
+const ensureApiV1 = (url: string): string => {
+  let cleanUrl = url.trim().replace(/\/+$/, '');
+  if (cleanUrl.endsWith('/api/v1')) {
+    return cleanUrl;
+  }
+  if (cleanUrl.endsWith('/api')) {
+    return `${cleanUrl}/v1`;
+  }
+  return `${cleanUrl}/api/v1`;
+};
+
 const getBaseUrl = (): string => {
   const envUrl = process.env.EXPO_PUBLIC_API_URL;
 
-  // 1. Detect Expo Dev Server host IP for physical devices / Expo Go
+  // 1. If envUrl is explicitly provided and is a remote URL (e.g. Vercel/Render), normalize and use it
+  if (envUrl && !envUrl.includes('localhost') && !envUrl.includes('127.0.0.1')) {
+    return ensureApiV1(envUrl);
+  }
+
+  // 2. Detect Expo Dev Server host IP for physical devices / Expo Go on LAN
   const hostUri = Constants.expoConfig?.hostUri;
   if (hostUri) {
     const ip = hostUri.split(':')[0];
@@ -15,13 +31,13 @@ const getBaseUrl = (): string => {
     }
   }
 
-  // 2. Android emulator fallback (10.0.2.2 connects to host machine's localhost)
+  // 3. Android emulator fallback (10.0.2.2 connects to host machine's localhost)
   if (Platform.OS === 'android') {
     return 'http://10.0.2.2:5000/api/v1';
   }
 
-  // 3. Default to env or localhost for web/iOS simulator
-  return envUrl || 'http://localhost:5000/api/v1';
+  // 4. Default fallback to envUrl or localhost for web/iOS simulator
+  return ensureApiV1(envUrl || 'http://localhost:5000');
 };
 
 export const api: AxiosInstance = axios.create({
