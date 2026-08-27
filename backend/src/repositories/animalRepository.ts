@@ -33,9 +33,6 @@ export class AnimalRepository {
       )
       .eq('farm_id', farmId);
 
-    if (filters.species) {
-      query = query.eq('species', filters.species);
-    }
     if (filters.status) {
       query = query.eq('status', filters.status);
     }

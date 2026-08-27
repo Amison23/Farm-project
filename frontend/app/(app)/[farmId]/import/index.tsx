@@ -17,7 +17,6 @@ const SYSTEM_FIELDS = [
   { key: 'sheep_id', label: 'Tag ID / Ear Tag *', required: true },
   { key: 'breed', label: 'Breed *', required: true },
   { key: 'sex', label: 'Sex (male/female)', required: false },
-  { key: 'species', label: 'Species / Type', required: false },
   { key: 'family_line', label: 'Pedigree Lineage Group', required: false },
   { key: 'birth_year', label: 'Birth Year (YYYY)', required: false },
   { key: 'date_of_birth', label: 'Date of Birth (YYYY-MM-DD)', required: false },
