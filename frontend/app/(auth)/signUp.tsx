@@ -16,6 +16,11 @@ export default function SignUp() {
   const [errorMsg, setErrorMsg] = useState('');
 
   const handleSignUp = async () => {
+    // Auth signup logic commented out for UI preview
+    await signUp(email, password, fullName);
+    router.replace('/(app)/farmSelect');
+
+    /*
     if (!fullName || !email || !password) {
       setErrorMsg('Please fill in all required fields.');
       return;
@@ -35,6 +40,7 @@ export default function SignUp() {
     } finally {
       setIsSubmitting(false);
     }
+    */
   };
 
   return (

@@ -57,6 +57,7 @@ api.interceptors.request.use(
       delete config.headers['Content-Type'];
     }
 
+    /* Auth token injection commented out for UI preview
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.access_token) {
@@ -65,6 +66,7 @@ api.interceptors.request.use(
     } catch (err) {
       console.warn('[API Interceptor] Token retrieval failed:', err);
     }
+    */
     return config;
   },
   (error) => Promise.reject(error)
@@ -89,6 +91,7 @@ const processQueue = (error: any, token: string | null = null) => {
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
+    /* Auth refresh logic commented out for UI preview
     const originalRequest = error.config;
     const status = error.response?.status;
     const code = error.response?.data?.error?.code;
@@ -142,6 +145,7 @@ api.interceptors.response.use(
         isRefreshing = false;
       }
     }
+    */
 
     console.log('[RAW_BACKEND_ERROR_RESPONSE]', {
       status: error.response?.status,

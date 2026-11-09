@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { AppState } from 'react-native';
-import { supabase } from '../services/supabase';
-import { api } from '../services/api';
+import React, { createContext, useContext, useState } from 'react';
+// import { AppState } from 'react-native';
+// import { supabase } from '../services/supabase';
+// import { api } from '../services/api';
 import { UserProfile } from '../types/auth';
 
 interface AuthContextType {
@@ -15,11 +15,30 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [session, setSession] = useState<any | null>(null);
-  const [user, setUser] = useState<UserProfile | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+// Mock user and session for UI preview
+const MOCK_USER: UserProfile = {
+  id: 'dev-farmer-id',
+  full_name: 'Demo Farmer',
+  created_at: new Date().toISOString(),
+};
 
+const MOCK_SESSION: any = {
+  access_token: 'mock-dev-token',
+  refresh_token: 'mock-dev-refresh-token',
+  user: {
+    id: 'dev-farmer-id',
+    email: 'farmer@example.com',
+    user_metadata: { full_name: 'Demo Farmer' },
+  },
+};
+
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  // Auth logic commented out for UI preview - using mock user & session
+  const [session, setSession] = useState<any | null>(MOCK_SESSION);
+  const [user, setUser] = useState<UserProfile | null>(MOCK_USER);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  /*
   const fetchProfile = async (sessionUser: any, tokenOverride?: string) => {
     if (!sessionUser) {
       setUser(null);
@@ -74,8 +93,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       subscription.unsubscribe();
     };
   }, []);
+  */
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = async (_email: string, _password: string) => {
+    /*
     const res = await api.post('/auth/login', { email, password });
     const sess = res.data?.data?.session;
     const sessionUser = res.data?.data?.user;
@@ -89,9 +110,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         await fetchProfile(sessionUser, sess.access_token);
       }
     }
+    */
+    setSession(MOCK_SESSION);
+    setUser(MOCK_USER);
   };
 
-  const signUp = async (email: string, password: string, fullName: string) => {
+  const signUp = async (_email: string, _password: string, fullName: string) => {
+    /*
     const res = await api.post('/auth/signup', { email, password, full_name: fullName });
     const sess = res.data?.data?.session;
     const sessionUser = res.data?.data?.user;
@@ -105,9 +130,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         await fetchProfile(sessionUser, sess.access_token);
       }
     }
+    */
+    setSession(MOCK_SESSION);
+    setUser({ ...MOCK_USER, full_name: fullName || 'Demo Farmer' });
   };
 
   const signOut = async () => {
+    /*
     try {
       await supabase.auth.signOut();
     } catch (err) {
@@ -116,6 +145,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setSession(null);
       setUser(null);
     }
+    */
+    setSession(null);
+    setUser(null);
   };
 
   return (
