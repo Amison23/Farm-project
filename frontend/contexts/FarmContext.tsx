@@ -21,29 +21,51 @@ export const FarmProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoadingFarms, setIsLoadingFarms] = useState<boolean>(true);
 
   const refreshFarms = async () => {
+    /* Auth condition commented out for UI preview
     if (!session) {
       setFarms([]);
       setActiveFarm(null);
       setIsLoadingFarms(false);
       return;
     }
+    */
 
     try {
       setIsLoadingFarms(true);
       const res = await api.get('/farms');
       const farmList: Farm[] = res.data.data || [];
-      setFarms(farmList);
-
-      // Auto-select first farm if activeFarm is not set or not in list
       if (farmList.length > 0) {
+        setFarms(farmList);
         if (!activeFarm || !farmList.find(f => f.id === activeFarm.id)) {
           setActiveFarm(farmList[0]);
         }
       } else {
-        setActiveFarm(null);
+        // Fallback demo farm for UI preview
+        const demoFarms: Farm[] = [
+          {
+            id: 'demo-farm-1',
+            name: 'Green Valley Farm',
+            location: 'Rift Valley, Kenya',
+            role: 'owner',
+            created_at: new Date().toISOString(),
+          },
+        ];
+        setFarms(demoFarms);
+        setActiveFarm(demoFarms[0]);
       }
     } catch (err) {
-      console.error('[FarmContext] refreshFarms failed:', err);
+      console.warn('[FarmContext] refreshFarms failed, using demo farm for UI preview:', err);
+      const demoFarms: Farm[] = [
+        {
+          id: 'demo-farm-1',
+          name: 'Green Valley Farm',
+          location: 'Rift Valley, Kenya',
+          role: 'owner',
+          created_at: new Date().toISOString(),
+        },
+      ];
+      setFarms(demoFarms);
+      setActiveFarm(demoFarms[0]);
     } finally {
       setIsLoadingFarms(false);
     }

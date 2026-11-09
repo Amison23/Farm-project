@@ -9,6 +9,10 @@ export default function Index() {
   const { session, isLoading } = useAuth();
 
   useEffect(() => {
+    // Auth redirect commented out for UI preview - navigating straight to app
+    router.replace('/(app)/farmSelect');
+
+    /*
     if (isLoading) return;
 
     if (!session) {
@@ -16,6 +20,7 @@ export default function Index() {
     } else {
       router.replace('/(app)/farmSelect');
     }
+    */
   }, [session, isLoading]);
 
   return (

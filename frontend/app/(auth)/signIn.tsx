@@ -20,6 +20,11 @@ export default function SignIn() {
   const [errorMsg, setErrorMsg] = useState('');
 
   const handleSignInWith = async (targetEmail: string, targetPass: string) => {
+    // Auth login logic commented out for UI preview
+    await signIn(targetEmail, targetPass);
+    router.replace('/(app)/farmSelect');
+
+    /*
     if (!targetEmail || !targetPass) {
       setErrorMsg('Please fill in all fields.');
       return;
@@ -35,6 +40,7 @@ export default function SignIn() {
     } finally {
       setIsSubmitting(false);
     }
+    */
   };
 
   const handleSignIn = () => handleSignInWith(email, password);

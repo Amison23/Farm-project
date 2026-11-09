@@ -14,8 +14,47 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// ─── CORS Configuration ────────────────────────────────────────────────────────
+const allowedOrigins = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(',').map((o) => o.trim())
+  : ['*'];
+
+const corsOptions: cors.CorsOptions = {
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps, cURL, Postman)
+    if (!origin) return callback(null, true);
+
+    // Allow in non-production or if wildcard '*' is explicitly set
+    if (allowedOrigins.includes('*') || process.env.NODE_ENV !== 'production') {
+      return callback(null, true);
+    }
+
+    // Allow any Vercel domain (*.vercel.app) or configured origins
+    const isAllowed =
+      allowedOrigins.some((allowed) => {
+        if (allowed === origin) return true;
+        if (allowed.includes('*')) {
+          const regex = new RegExp('^' + allowed.replace(/\*/g, '.*') + '$');
+          return regex.test(origin);
+        }
+        return false;
+      }) || /\.vercel\.app$/.test(origin);
+
+    if (isAllowed) {
+      return callback(null, true);
+    }
+
+    console.warn(`[CORS] Blocked request from unauthorized origin: ${origin}`);
+    callback(new Error(`CORS policy error: Origin ${origin} not allowed.`));
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+  credentials: true,
+  optionsSuccessStatus: 200,
+};
+
 // ─── Middleware ────────────────────────────────────────────────────────────────
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // ─── Health Check ──────────────────────────────────────────────────────────────

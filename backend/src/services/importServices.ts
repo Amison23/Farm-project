@@ -7,7 +7,49 @@ import {
 } from '../types/csv_import.js';
 import { AnimalSpecies, AnimalSex, AnimalStatus } from '../types/animal.js';
 
+// Whitelist of valid database columns for the 'animals' table in PostgreSQL
+const ALLOWED_ANIMALS_COLUMNS = new Set([
+  'farm_id',
+  'sheep_id',
+  'birth_year',
+  'family_line',
+  'sire_id',
+  'dam_id',
+  'sex',
+  'breed',
+  'date_of_birth',
+  'status',
+  'notes',
+]);
+
 export class ImportService {
+  /**
+   * Fail-Safe Payload Sanitizer:
+   * Compares the row payload against the PostgreSQL table schema columns.
+   * Strips out any unrecognized columns (preventing PostgREST schema errors)
+   * and preserves non-schema values inside 'notes'.
+   */
+  private sanitizePayloadForDb(payload: Record<string, any>, allowedColumns: Set<string>): Record<string, any> {
+    const cleanPayload: Record<string, any> = {};
+    const extraFields: string[] = [];
+
+    for (const [key, value] of Object.entries(payload)) {
+      if (allowedColumns.has(key)) {
+        cleanPayload[key] = value;
+      } else if (value !== undefined && value !== null && value !== '') {
+        extraFields.push(`${key}: ${value}`);
+      }
+    }
+
+    if (extraFields.length > 0) {
+      const existingNotes = cleanPayload.notes || '';
+      const extraSummary = extraFields.join(' | ');
+      cleanPayload.notes = existingNotes ? `${extraSummary} | ${existingNotes}` : extraSummary;
+    }
+
+    return cleanPayload;
+  }
+
   /**
    * Parse an uploaded CSV buffer to extract headers, sample rows, and file metadata.
    */
@@ -161,18 +203,28 @@ export class ImportService {
         }
       }
 
-      validPayloads.push({
+      // Combine species into notes if specified, since species is not a column in animals SQL schema
+      let finalNotes = rawNotes?.trim() || null;
+      if (rawSpecies?.trim()) {
+        finalNotes = finalNotes
+          ? `Species: ${rawSpecies.trim()} | ${finalNotes}`
+          : `Species: ${rawSpecies.trim()}`;
+      }
+
+      const rawPayload = {
         farm_id: farmId,
         sheep_id: cleanSheepId,
-        species: this.normalizeSpecies(rawSpecies),
         sex: this.normalizeSex(rawSex),
         breed: rawBreed!.trim(),
         family_line: rawFamilyLine?.trim() || null,
         birth_year: parsedBirthYear,
         date_of_birth: rawDOB?.trim() || null,
         status: this.normalizeStatus(rawStatus),
-        notes: rawNotes?.trim() || null,
-      });
+        notes: finalNotes,
+      };
+
+      const safePayload = this.sanitizePayloadForDb(rawPayload, ALLOWED_ANIMALS_COLUMNS);
+      validPayloads.push(safePayload);
     });
 
     let createdCount = 0;
